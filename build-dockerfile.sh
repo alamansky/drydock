@@ -1,0 +1,1 @@
+cat dockerfile-partials/from.Dockerfile dockerfile-partials/bash.Dockerfile dockerfile-partials/vscode.Dockerfile dockerfile-partials/fs.Dockerfile > Dockerfile
