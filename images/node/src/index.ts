@@ -1,0 +1,1 @@
+export const helloWorld = (text: string):string => text;

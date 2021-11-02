@@ -1,14 +1,16 @@
 {
-	"name": "app",
+	"name": "react-sc_ts_jest",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
 		"dev": "npx webpack serve --mode development --env development --config webpack.config.js --hot --history-api-fallback --host 0.0.0.0",
-		"test": "jest --runInBand",
+		"test": "npx jest --maxWorkers=1",
 		"export-bundle-data": "./node_modules/.bin/webpack --profile --json > stats.json",
 		"see-bundle-data": "./node_modules/.bin/webpack-bundle-analyzer stats.json",
-		"analyze": "npm run export-bundle-data && npm run see-bundle-data"
+		"analyze": "npm run export-bundle-data && npm run see-bundle-data",
+		"storybook": "start-storybook -p 6006",
+        "build-storybook": "build-storybook"
 	},
 	"keywords": [],
 	"author": "",

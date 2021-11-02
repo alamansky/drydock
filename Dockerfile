@@ -26,46 +26,66 @@ RUN git clone https://github.com/Alamansky/bash-scripts.git /root/.bash_it/custo
 
 ### INSTALL VSCODE SERVER + EXTENSIONS
 
-COPY /.vscode-server /root/.vscode-server
+# set working directory to /usr/src/app
+
+COPY ./vscode-server.tar.gz /root
+
+RUN tar -xpzf /root/vscode-server.tar.gz -C /root
+
+RUN rm /root/vscode-server.tar.gz
 
 # get args
 
-ARG PACKAGE_NAME
+ARG IMAGE_NAME
 
 # set working directory to /usr/src/app
 
 WORKDIR /usr/src/app
 
-# download dotfiles from GIT
+# copy script to root folder (no files can be present in `/usr/src/app` prior to cloning a Git repo there)
 
-RUN git clone https://github.com/Alamansky/dotfiles.git /usr/src/app
+COPY ./images/${IMAGE_NAME}/setupScripts/getExternalFiles.sh /root
 
-COPY ./packages/${PACKAGE_NAME} /usr/src/app
+# get tooling boilerplate from Github repo, install to `/usr/src/app`
+
+RUN bash /root/getExternalFiles.sh
+
+# remove script from root folder
+
+RUN rm /root/getExternalFiles.sh
+
+# copy project files from local dir to `/usr/src/app` (this is a safe operation since the Git repo has already been cloned)
+
+COPY ./images/${IMAGE_NAME} /usr/src/app
 
 # install node modules
 
 RUN npm install
 
-# need this for storybook to work
+# do any post-`npm install` setup, e.g. configure storybook
 
-RUN npm i -D html-webpack-plugin@next
+RUN bash ./setupScripts/runInsideContainer.sh
 
-# install storybook
+# remove setup scripts
 
-RUN npx sb init
+RUN rm -rf ./setupScripts
 
-# delete stories folder
-
-RUN rm -rf ./src/stories
+# create a temp folder in /root
 
 RUN mkdir /root/kickstart
 
+# copy script into container for moving files from `/usr/src/app` to `/root/kickstart`
+
 COPY ./moveAllFiles.sh /usr/src/app
+
+# run script
 
 RUN bash ./moveAllFiles.sh
 
+# delete script
+
 RUN rm /root/kickstart/moveAllFiles.sh
 
-# build command: docker image build -t alamansky/eleventy:latest --build-arg PACKAGE_NAME=eleventy .
+# build command: docker image build -t alamansky/<image-name>:latest --build-arg IMAGE_NAME=<image-name> .
 
 # --no-cache option if GH repos are updated
