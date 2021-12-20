@@ -85,7 +85,3 @@ RUN bash ./moveAllFiles.sh
 # delete script
 
 RUN rm /root/kickstart/moveAllFiles.sh
-
-# build command: docker image build -t alamansky/<image-name>:latest --build-arg IMAGE_NAME=<image-name> .
-
-# --no-cache option if GH repos are updated
